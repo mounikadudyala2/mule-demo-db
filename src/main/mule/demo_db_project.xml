@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="0945f920-2fe5-4c16-8b23-42e20fd0e60f" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config1" doc:name="Database Config" doc:id="e6ceac3e-6a67-4f27-a8fe-ae2afda92632" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Mounika@1303" database="mule_DB" />
+	</db:config>
+	<flow name="demo_db_projectFlow" doc:id="6d057cf9-50ed-4b2f-8a69-8fa3c98801e2" >
+		<http:listener doc:name="Listener" doc:id="cde40500-9893-4ed1-8c5d-e7ed6b47b4e4" config-ref="HTTP_Listener_config" path="/getemployees" allowedMethods="GET"/>
+		<db:select doc:name="Select" doc:id="83c66cc6-e2fa-457d-8148-ecbe3b7d6322" config-ref="Database_Config1">
+			<db:sql ><![CDATA[select * from employee;]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="73b162d7-e9dc-4fee-b39b-026aef06f4ad" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
